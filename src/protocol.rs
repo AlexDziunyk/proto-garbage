@@ -1,6 +1,7 @@
+use std::{fs::read_to_string, path::Path};
+
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use std::{fs::read_to_string, path::Path};
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Field {
@@ -16,9 +17,9 @@ pub struct Object {
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Protocol {
-    models: Vec<Object>,
-    requests: Vec<Object>,
-    updates: Vec<Object>,
+    pub models: Vec<Object>,
+    pub requests: Vec<Object>,
+    pub updates: Vec<Object>,
 }
 
 impl Protocol {
