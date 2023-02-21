@@ -55,7 +55,7 @@ impl TypeRegistry {
             .iter()
             .map(|object_field| Field {
                 name: object_field.name.clone(),
-                r#type: Rc::clone(&self.type_map[&object_field.r#type]),
+                r#type: self.get_type(&object_field.r#type),
             })
             .collect();
 
@@ -71,6 +71,11 @@ impl TypeRegistry {
     }
 
     pub fn get_type(&self, name: &str) -> Rc<Type> {
-        Rc::clone(&self.type_map[name])
+        if &name[name.len() - 2..] == "[]" {
+            let item_type = self.get_type(&name[..name.len() - 2]);
+            Rc::new(Type::Array(item_type))
+        } else {
+            Rc::clone(&self.type_map[name])
+        }
     }
 }
