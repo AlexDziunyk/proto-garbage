@@ -1,0 +1,37 @@
+[[models]]
+name = "user"
+fields = [
+    { name = "id", type = "int" },
+    { name = "login", type = "string" },
+    { name = "avatar", type = "string" },
+    { name = "status", type = "string" },
+    { name = "bio", type = "string" },
+]
+
+[[models]]
+name = "chat"
+fields = [
+    { name = "id", type = "int" },
+    { name = "title", type = "string" },
+    { name = "avatar", type = "string" },
+]
+
+[[models]]
+name = "message"
+fields = [
+    { name = "id", type = "int" },
+    { name = "chat_id", type = "int" },
+    { name = "text", type = "string" },
+    { name = "from_id", type = "int" },
+    { name = "date", type = "int" },
+]
+
+
+[[requests]]
+name = "get_user"
+fields = [{ name = "id", type = "int" }]
+
+
+[[updates]]
+name = "user"
+fields = [{ name = "user", type = "user" }]
