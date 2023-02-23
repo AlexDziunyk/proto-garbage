@@ -54,7 +54,7 @@ fn def_model_to_json(structure: &Structure) -> String {
         &format!("{}->", structure.name),
         &structure.fields,
     ));
-    buffer.push_str("return true; }");
+    buffer.push_str("return json; }");
 
     buffer
 }
