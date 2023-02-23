@@ -15,12 +15,47 @@ pub struct Structure {
     pub fields: Vec<Field>,
 }
 
-#[derive(Debug, Clone)]
+impl Structure {
+    pub fn type_name(&self) -> String {
+        match &self.name[..2] {
+            "rq" => "request",
+            "up" => "update",
+            _ => "model",
+        }
+        .to_owned()
+    }
+}
+
+#[derive(Debug)]
 pub enum Type {
     Primitive(String),
     String,
     Array(Rc<Type>),
     Structure(Structure),
+}
+
+impl Type {
+    pub fn cname(&self) -> String {
+        match self {
+            Type::Primitive(type_name) => type_name.clone(),
+            Type::String => "char *".to_owned(),
+            Type::Array(_) => "GArray *".to_owned(),
+            Type::Structure(structure) => structure.cname.to_owned() + " *",
+        }
+    }
+
+    pub fn json_name(&self) -> String {
+        match self {
+            Type::Primitive(type_name) => match type_name.as_str() {
+                "bool" => "Bool",
+                _ => "Number",
+            },
+            Type::String => "String",
+            Type::Array(_) => "Item",
+            Type::Structure(_) => "Item",
+        }
+        .to_owned()
+    }
 }
 
 pub struct TypeRegistry {
