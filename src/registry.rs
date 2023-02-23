@@ -40,7 +40,7 @@ impl Type {
             Type::Primitive(type_name) => type_name.clone(),
             Type::String => "char *".to_owned(),
             Type::Array(_) => "GArray *".to_owned(),
-            Type::Structure(structure) => structure.cname.to_owned() + " *",
+            Type::Structure(structure) => structure.cname.clone() + " *",
         }
     }
 
@@ -70,6 +70,8 @@ impl Default for TypeRegistry {
 
         registry.register_type("int", Type::Primitive("int".to_owned()));
         registry.register_type("bool", Type::Primitive("bool".to_owned()));
+        registry.register_type("float", Type::Primitive("float".to_owned()));
+        registry.register_type("double", Type::Primitive("double".to_owned()));
         registry.register_type("string", Type::String);
 
         registry
