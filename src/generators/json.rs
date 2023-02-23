@@ -206,41 +206,37 @@ fn check_type(name: &str, r#type: Rc<Type>) -> String {
     format!("cJSON_Is{}({}_json)", r#type.json_name(), name)
 }
 
-fn extract_value(name: &str, access: &str, r#type: Rc<Type>) -> String {
-    let mut buffer = String::new();
+fn declare_value(name: &str, r#type: Rc<Type>) -> String {
+    format!("{} {}", r#type.cname(), extract_value(name, name, r#type))
+}
 
-    let value = match r#type.as_ref() {
-        Type::Primitive(type_name) => match type_name.as_str() {
-            "bool" => format!("cJSON_IsTrue({name}_json)"),
-            "double" | "float" => format!("{name}_json->valuedouble"),
-            _ => format!("{name}_json->valueint"),
-        },
-        Type::String => format!("g_strdup({name}_json->valuestring)"),
+fn extract_value(name: &str, access: &str, r#type: Rc<Type>) -> String {
+    match r#type.as_ref() {
+        Type::Primitive(type_name) => {
+            let value = match type_name.as_str() {
+                "bool" => format!("cJSON_IsTrue({name}_json)"),
+                "double" | "float" => format!("{name}_json->valuedouble"),
+                _ => format!("{name}_json->valueint"),
+            };
+            format!("{access} = {value};")
+        }
+        Type::String => format!("{access} = g_strdup({name}_json->valuestring);"),
         Type::Array(item_type) => {
             let item_name = format!("{name}_item");
-            let item_str = extract_value(
-                &item_name,
-                &format!("{} {}", item_type.cname(), item_name),
-                item_type.clone(),
-            );
+            let item_str = declare_value(&item_name, item_type.clone());
 
-            buffer.push_str(&format!(
-                "{} {name} = g_array_new(false, false, sizeof({})); \
+            format!(
+                "{access} = g_array_new(false, false, sizeof({})); \
                  cJSON *{item_name}_json = NULL; \
                  cJSON_ArrayForEach({item_name}_json, {name}_json) {{ \
                     {item_str} \
-                    g_array_append_val({name}, {item_name}); \
+                    g_array_append_val({access}, {item_name}); \
                  }}",
-                r#type.cname(),
                 item_type.cname()
-            ));
-
-            name.to_owned()
+            )
         }
-        Type::Structure(structure) => format!("{}_from_json({}_json)", structure.name, name),
-    };
-
-    buffer.push_str(&format!("{access} = {value};"));
-
-    buffer
+        Type::Structure(structure) => {
+            format!("{access} = {}_from_json({}_json);", structure.name, name)
+        }
+    }
 }
