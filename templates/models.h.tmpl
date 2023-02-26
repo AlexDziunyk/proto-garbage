@@ -1,0 +1,16 @@
+#pragma once
+
+#include <cJSON.h>
+#include <glib.h>
+
+{{ for model in models }}
+typedef struct \{
+    { model.fields }
+} { model.cname };
+{{ endfor }}
+
+{{ for model in models }}
+cJSON *{ model.name }_to_json({ model.cname } *{ model.name });
+{ model.cname } *{ model.name }_from_json(cJSON *json);
+void free_{ model.name }({ model.cname } *{ model.name });
+{{ endfor }}

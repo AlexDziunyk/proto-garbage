@@ -1,0 +1,14 @@
+#include "models.h"
+
+cJSON *{ name }_to_json({ cname } *{ name }) \{
+    { fields_to_json | unescaped }
+}
+
+{ cname } *{ name }_from_json(cJSON *json) \{
+    { fields_from_json | unescaped }
+}
+
+void free_{ name }({ cname } *{ name }) \{
+    { fields_free | unescaped }
+    g_free({ name });
+}
