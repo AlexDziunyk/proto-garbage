@@ -1,123 +1,8 @@
 use std::rc::Rc;
 
-use crate::registry::{Field, Structure, Type};
+use crate::registry::{Field, Type};
 
-pub fn decl_structure_to_json(structure: &Structure) -> String {
-    match structure.type_name().as_str() {
-        "model" => decl_model_to_json(structure),
-        _ => decl_message_to_json(structure),
-    }
-}
-
-pub fn def_structure_to_json(structure: &Structure) -> String {
-    match structure.type_name().as_str() {
-        "model" => def_model_to_json(structure),
-        _ => def_message_to_json(structure),
-    }
-}
-
-pub fn decl_structure_from_json(structure: &Structure) -> String {
-    match structure.type_name().as_str() {
-        "model" => decl_model_from_json(structure),
-        _ => decl_message_from_json(structure),
-    }
-}
-
-pub fn def_structure_from_json(structure: &Structure) -> String {
-    match structure.type_name().as_str() {
-        "model" => def_model_from_json(structure),
-        _ => def_message_from_json(structure),
-    }
-}
-
-fn decl_model_to_json(structure: &Structure) -> String {
-    format!(
-        "cJSON *{}_to_json({} *{});",
-        structure.name, structure.cname, structure.name
-    )
-}
-
-fn def_model_to_json(structure: &Structure) -> String {
-    let mut buffer = String::default();
-
-    buffer.push_str(&decl_model_to_json(structure).replace(';', "{"));
-    buffer.push_str("cJSON *json = cJSON_CreateObject();");
-    buffer.push_str(&add_fields(
-        &format!("{}->", structure.name),
-        &structure.fields,
-    ));
-    buffer.push_str("return json; }");
-
-    buffer
-}
-
-fn decl_message_to_json(structure: &Structure) -> String {
-    format!(
-        "static bool {}_to_json(u_{}_data *data, cJSON *json);",
-        structure.name,
-        structure.type_name()
-    )
-}
-
-fn def_message_to_json(structure: &Structure) -> String {
-    let mut buffer = String::default();
-
-    buffer.push_str(&decl_message_to_json(structure).replace(';', "{"));
-    buffer.push_str(&add_fields(
-        &format!("data->{}.", &structure.name[3..]),
-        &structure.fields,
-    ));
-    buffer.push_str("return true; }");
-
-    buffer
-}
-
-fn decl_model_from_json(structure: &Structure) -> String {
-    format!(
-        "{} *{}_from_json(cJSON *json);",
-        structure.cname, structure.name
-    )
-}
-
-fn def_model_from_json(structure: &Structure) -> String {
-    let mut buffer = String::default();
-
-    buffer.push_str(&decl_model_from_json(structure).replace(';', "{"));
-    buffer.push_str(&format!(
-        "{} *{} = g_new({}, 1);",
-        structure.cname, structure.name, structure.cname
-    ));
-    buffer.push_str(&extract_fields(
-        &format!("{}->", structure.name),
-        &structure.fields,
-    ));
-    buffer.push_str(&format!("return {}; }}", structure.name));
-
-    buffer
-}
-
-fn decl_message_from_json(structure: &Structure) -> String {
-    format!(
-        "static bool {}_from_json(cJSON *json, u_{}_data *data);",
-        structure.name,
-        structure.type_name()
-    )
-}
-
-fn def_message_from_json(structure: &Structure) -> String {
-    let mut buffer = String::default();
-
-    buffer.push_str(&decl_message_from_json(structure).replace(';', "{"));
-    buffer.push_str(&extract_fields(
-        &format!("data->{}.", &structure.name[3..]),
-        &structure.fields,
-    ));
-    buffer.push_str("return true; }");
-
-    buffer
-}
-
-fn add_fields(access: &str, fields: &[Field]) -> String {
+pub fn fields_to_json(access: &str, fields: &[Field]) -> String {
     let mut buffer = String::default();
 
     fields.iter().for_each(|field| {
@@ -182,7 +67,7 @@ fn create_item(name: &str, access: &str, r#type: Rc<Type>) -> String {
     }
 }
 
-fn extract_fields(access: &str, fields: &[Field]) -> String {
+pub fn fields_from_json(access: &str, fields: &[Field]) -> String {
     let mut get_buffer = String::default();
     let mut extract_buffer = String::default();
 

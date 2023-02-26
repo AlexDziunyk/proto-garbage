@@ -41,7 +41,7 @@ fn free_value(access: &str, r#type: Rc<Type>) -> String {
 
             let loop_str = if !item_str.is_empty() {
                 format!(
-                    "for (guint i = 0; i < {access}.len; i++) {{ \
+                    "for (guint i = 0; i < {access}->len; i++) {{ \
                         {item_str} \
                     }}"
                 )
