@@ -15,17 +15,6 @@ pub struct Structure {
     pub fields: Vec<Field>,
 }
 
-impl Structure {
-    pub fn type_name(&self) -> String {
-        match &self.name[..2] {
-            "rq" => "request",
-            "up" => "update",
-            _ => "model",
-        }
-        .to_owned()
-    }
-}
-
 #[derive(Debug)]
 pub enum Type {
     Primitive(String),

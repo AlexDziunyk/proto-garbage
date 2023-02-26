@@ -5,5 +5,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.69"
+tinytemplate = "1.2.1"
 serde = { version = "1.0.147", features = ["derive"] }
 toml = "0.7.2"

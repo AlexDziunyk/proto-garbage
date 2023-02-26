@@ -1,2 +1,3 @@
-pub mod json;
-pub mod structure;
+mod json;
+pub mod models;
+mod structure;
