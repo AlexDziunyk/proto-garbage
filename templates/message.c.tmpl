@@ -1,0 +1,80 @@
+#include "{ message_type.name }s.h"
+
+static void init_{ message_type.prefix }_funcs(t_{ message_type.prefix }_funcs *funcs) \{
+    {{ for message in messages - }}
+        init_{ message.name }_funcs(&funcs[{ message.name | to_uppercase }]);
+    {{ - endfor }}
+}
+
+static t_{ message_type.prefix }_funcs *get_{ message_type.prefix }_funcs(void) \{
+    static bool intitialized = false;
+    static t_{ message_type.prefix }_funcs funcs[{ message_type.prefix | to_uppercase }_COUNT];
+
+    if (!intitialized) \{
+        init_{ message_type.prefix }_funcs(funcs);
+        intitialized = true;
+    }
+    return funcs;
+}
+
+t_{ message_type.name } *new_{ message_type.name }(e_{ message_type.name }_type type) \{
+    t_{ message_type.name } *{ message_type.name } = g_malloc0(sizeof(t_{ message_type.name }));
+
+    { message_type.name }->type = type;
+    return { message_type.name };
+}
+
+void free_{ message_type.name }(t_{ message_type.name } *{ message_type.name }) \{
+    t_{ message_type.prefix }_funcs *funcs = get_{ message_type.prefix }_funcs();
+
+    if ({ message_type.name } != NULL && funcs[{ message_type.name }->type].free) \{
+        funcs[{ message_type.name }->type].free(&{ message_type.name }->data);
+    }
+    g_free({ message_type.name });
+}
+
+cJSON *{ message_type.name }_to_json(t_{ message_type.name } *{ message_type.name }) \{
+    t_{ message_type.prefix }_funcs *funcs = get_{ message_type.prefix }_funcs();
+    cJSON *json = cJSON_CreateObject();
+
+    if (cJSON_AddNumberToObject(json, "type", { message_type.name }->type)
+        && funcs[{ message_type.name }->type].to_json(&{ message_type.name }->data, json)) \{
+        return json;
+    }
+
+    cJSON_Delete(json);
+    return NULL;
+}
+
+char *{ message_type.name }_to_string(t_{ message_type.name } *{ message_type.name }) \{
+    cJSON *json = { message_type.name }_to_json({ message_type.name });
+    char *string = cJSON_PrintUnformatted(json);
+
+    cJSON_Delete(json);
+    return string;
+}
+
+t_{ message_type.name } *{ message_type.name }_from_json(cJSON *json) \{
+    t_{ message_type.prefix }_funcs *funcs = get_{ message_type.prefix }_funcs();
+    cJSON *type_json = cJSON_GetObjectItemCaseSensitive(json, "type");
+
+    if (!cJSON_IsNumber(type_json)) \{
+        return NULL;
+    }
+
+    t_{ message_type.name } *{ message_type.name } = new_{ message_type.name }(type_json->valueint);
+    if (funcs[{ message_type.name }->type].from_json(json, &{ message_type.name }->data)) \{
+        return { message_type.name };
+    }
+
+    g_free({ message_type.name });
+    return NULL;
+}
+
+t_{ message_type.name } *{ message_type.name }_from_string(const char *string) \{
+    cJSON *json = cJSON_Parse(string);
+    t_{ message_type.name } *{ message_type.name } = { message_type.name }_from_json(json);
+
+    cJSON_Delete(json);
+    return { message_type.name };
+}

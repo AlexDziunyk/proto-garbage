@@ -1,0 +1,28 @@
+#include "{ type.name }s.h"
+
+t_{ type.name } *new_{ stripped_name }_{ type.name }(void) \{
+    t_{ type.name } *{ type.name } = new_{ type.name }({ name | to_uppercase });
+    return { type.name };
+}
+
+{{ if fields_free }}
+static void free_{ name }(u_{ type.name }_data *data) \{
+    { fields_free }
+}
+{{ endif }}
+
+static bool { name }_to_json(u_{ type.name }_data *data, cJSON *json) \{
+    { fields_to_json }
+    return true;
+}
+
+static bool { name }_from_json(cJSON *json, u_{ type.name }_data *data) \{
+    { fields_from_json }
+    return true;
+}
+
+void init_{ name }_funcs(t_{ type.prefix }_funcs *funcs) \{
+    funcs->free = {{ if fields_free }} free_{ name } {{ else }} NULL {{endif}};
+    funcs->to_json = { name }_to_json;
+    funcs->from_json = { name }_from_json;
+}

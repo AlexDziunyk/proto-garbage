@@ -1,0 +1,53 @@
+#pragma once
+
+#include <cJSON.h>
+#include <glib.h>
+#include <stdbool.h>
+
+typedef enum \{
+    {{ for message in messages - }}
+        { message.name | to_uppercase },
+    {{ - endfor }}
+    { message_type.prefix | to_uppercase }_COUNT
+} e_{ message_type.name }_type;
+
+{{ for message in messages }}
+typedef struct \{
+    { message.fields }
+} { message.cname };
+{{ endfor }}
+
+typedef union \{
+    {{ for message in messages - }}
+        { message.cname } { message.stripped_name };
+    {{ - endfor }}
+} u_{ message_type.name }_data;
+
+typedef struct \{
+    e_{ message_type.name }_type type;
+    u_{ message_type.name }_data data;
+} t_{ message_type.name };
+
+typedef void (*{ message_type.prefix }_free_func)(u_{ message_type.name }_data *);
+typedef bool (*{ message_type.prefix }_to_json_func)(u_{ message_type.name }_data *, cJSON *);
+typedef bool (*{ message_type.prefix }_from_json_func)(cJSON *, u_{ message_type.name }_data *);
+
+typedef struct \{
+    { message_type.prefix }_free_func free;
+    { message_type.prefix }_to_json_func to_json;
+    { message_type.prefix }_from_json_func from_json;
+} t_{ message_type.prefix }_funcs;
+
+{{ for message in messages }}
+t_{ message_type.name } *new_{ message.stripped_name }_{ message_type.name }(void);
+void init_{ message.name }_funcs(t_{ message_type.prefix }_funcs *funcs);
+{{ endfor }}
+
+t_{ message_type.name } *new_{ message_type.name }(e_{ message_type.name }_type type);
+void free_{ message_type.name }(t_{ message_type.name } *{ message_type.name });
+
+cJSON *{ message_type.name }_to_json(t_{ message_type.name } *{ message_type.name });
+char *{ message_type.name }_to_string(t_{ message_type.name } *{ message_type.name });
+
+t_{ message_type.name } *{ message_type.name }_from_json(cJSON *json);
+t_{ message_type.name } *{ message_type.name }_from_string(const char *string);
