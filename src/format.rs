@@ -1,5 +1,5 @@
 use std::{
-    fs::write,
+    fs::{create_dir_all, write},
     io::Write,
     path::Path,
     process::{Command, Stdio},
@@ -10,6 +10,9 @@ use anyhow::{anyhow, Result};
 
 pub fn format_and_write<P: AsRef<Path>>(path: P, code: &str) -> Result<()> {
     let formatted = format_code(code).unwrap_or(code.to_owned());
+    if let Some(dir) = path.as_ref().parent() {
+        create_dir_all(dir)?;
+    }
     Ok(write(path, formatted)?)
 }
 
