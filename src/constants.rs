@@ -1,2 +1,2 @@
 pub const MODELS_INC_DIR: &str = "protocol/inc";
-pub const MODELS_SRC_DIR: &str = "protocol/models";
+pub const MODELS_SRC_DIR: &str = "protocol/src/models";
