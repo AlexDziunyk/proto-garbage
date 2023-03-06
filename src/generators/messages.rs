@@ -10,7 +10,7 @@ use crate::{
 
 use super::{
     json::{fields_from_json, fields_to_json},
-    structure::{decl_fields, free_fields},
+    structure::{decl_fields, decl_params, free_fields, init_fields},
 };
 
 #[derive(Clone, Serialize)]
@@ -32,6 +32,8 @@ struct MessageContext {
     cname: String,
     stripped_name: String,
     fields: String,
+    constructor_params: String,
+    fields_init: String,
     fields_free: String,
     fields_to_json: String,
     fields_from_json: String,
@@ -47,8 +49,13 @@ impl MessageContext {
             r#type: r#type.clone(),
             name: structure.name.clone(),
             cname: structure.cname.clone(),
-            stripped_name,
+            stripped_name: stripped_name.clone(),
             fields: decl_fields(&structure.fields),
+            constructor_params: decl_params(&structure.fields),
+            fields_init: init_fields(
+                &format!("{}->data.{}.", r#type.name, stripped_name),
+                &structure.fields,
+            ),
             fields_free: free_fields(&access, &structure.fields),
             fields_to_json: fields_to_json(&access, &structure.fields),
             fields_from_json: fields_from_json(&access, &structure.fields),

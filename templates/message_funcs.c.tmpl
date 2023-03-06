@@ -1,7 +1,10 @@
 #include "{ type.name }s.h"
 
-t_{ type.name } *new_{ stripped_name }_{ type.name }(void) \{
+t_{ type.name } *new_{ stripped_name }_{ type.name }({ constructor_params }) \{
     t_{ type.name } *{ type.name } = new_{ type.name }({ name | to_uppercase });
+
+    { fields_init }
+
     return { type.name };
 }
 

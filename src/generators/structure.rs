@@ -2,6 +2,24 @@ use std::rc::Rc;
 
 use crate::registry::{Field, Type};
 
+pub fn decl_params(fields: &[Field]) -> String {
+    fields
+        .iter()
+        .map(|field| format!("{} {}", field.r#type.cname(), field.name))
+        .collect::<Vec<_>>()
+        .join(",")
+}
+
+pub fn init_fields(access: &str, fields: &[Field]) -> String {
+    let mut buffer = String::default();
+
+    fields
+        .iter()
+        .for_each(|field| buffer.push_str(&format!("{}{} = {};", access, field.name, field.name)));
+
+    buffer
+}
+
 pub fn free_fields(access: &str, fields: &[Field]) -> String {
     let mut buffer = String::default();
 

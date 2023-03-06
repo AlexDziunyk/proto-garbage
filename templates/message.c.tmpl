@@ -2,7 +2,7 @@
 
 static void init_{ message_type.prefix }_funcs(t_{ message_type.prefix }_funcs *funcs) \{
     {{ for message in messages - }}
-        init_{ message.name }_funcs(&funcs[{ message.name | to_uppercase }]);
+    init_{ message.name }_funcs(&funcs[{ message.name | to_uppercase }]);
     {{ - endfor }}
 }
 
