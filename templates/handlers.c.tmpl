@@ -1,0 +1,13 @@
+#include "handlers.h"
+
+{{ for message in messages }}
+static void handle_{ message.stripped_name }_wrapper(t_{ message.type.name } *{ message.type.name }, t_client *client, t_server *server) \{
+    handle_{ message.stripped_name }(&{ message.type.name }->data.{ message.stripped_name }, client, server);
+}
+{{ endfor }}
+
+void init_handlers(t_server *server) \{
+    {{ for message in messages - }}
+    set_handler(server, { message.name | to_uppercase }, handle_{ message.stripped_name }_wrapper);
+    {{ - endfor }}
+}

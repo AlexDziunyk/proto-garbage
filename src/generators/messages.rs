@@ -1,9 +1,11 @@
+use std::path::Path;
+
 use anyhow::Result;
 use serde::Serialize;
 use tinytemplate::TinyTemplate;
 
 use crate::{
-    constants::{MESSAGES_INC_DIR, MESSAGES_SRC_DIR},
+    constants::{HANDLERS_INC_DIR, HANDLERS_SRC_DIR, MESSAGES_INC_DIR, MESSAGES_SRC_DIR},
     format::format_and_write,
     registry::Structure,
 };
@@ -78,8 +80,15 @@ pub fn generate_messages(
 
     generate_messages_header(&context, tt)?;
     generate_message_source(&context, tt)?;
+    if r#type.name == "request" {
+        generate_handlers_header(&context, tt)?;
+        generate_handlers_init(&context, tt)?;
+    }
     for message in context.messages {
         generate_message_funcs(&message, tt)?;
+        if r#type.name == "request" {
+            generate_handler_source(&message, tt)?;
+        }
     }
 
     Ok(())
@@ -103,5 +112,26 @@ fn generate_message_funcs(context: &MessageContext, tt: &TinyTemplate) -> Result
         MESSAGES_SRC_DIR, context.r#type.name, context.stripped_name
     );
     let source = tt.render("message_funcs.c", context)?;
+    format_and_write(path, &source)
+}
+
+fn generate_handlers_header(context: &MessagesContext, tt: &TinyTemplate) -> Result<()> {
+    let path = format!("{}/handlers.h", HANDLERS_INC_DIR);
+    let source = tt.render("handlers.h", context)?;
+    format_and_write(path, &source)
+}
+
+fn generate_handlers_init(context: &MessagesContext, tt: &TinyTemplate) -> Result<()> {
+    let path = format!("{}/handlers.c", HANDLERS_SRC_DIR);
+    let source = tt.render("handlers.c", context)?;
+    format_and_write(path, &source)
+}
+
+fn generate_handler_source(context: &MessageContext, tt: &TinyTemplate) -> Result<()> {
+    let path = format!("{}/handlers/{}.c", HANDLERS_SRC_DIR, context.stripped_name);
+    if Path::new(&path).exists() {
+        return Ok(());
+    }
+    let source = tt.render("handler.c", context)?;
     format_and_write(path, &source)
 }

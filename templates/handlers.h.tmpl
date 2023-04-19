@@ -1,0 +1,7 @@
+#pragma once
+
+#include "server.h"
+
+{{ for message in messages - }}
+void handle_{ message.stripped_name }({ message.cname } *{ message.type.name }, t_client *client, t_server *server);
+{{ - endfor }}
