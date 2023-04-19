@@ -5,7 +5,7 @@ use crate::registry::{Field, Type};
 pub fn decl_params(fields: &[Field]) -> String {
     fields
         .iter()
-        .map(|field| format!("{} {}", field.r#type.cname(), field.name))
+        .map(decl_param)
         .collect::<Vec<_>>()
         .join(",")
 }
@@ -15,7 +15,7 @@ pub fn init_fields(access: &str, fields: &[Field]) -> String {
 
     fields
         .iter()
-        .for_each(|field| buffer.push_str(&format!("{}{} = {};", access, field.name, field.name)));
+        .for_each(|field| buffer.push_str(&init_field(access, field)));
 
     buffer
 }
@@ -73,5 +73,19 @@ fn free_value(access: &str, r#type: Rc<Type>) -> String {
             )
         }
         Type::Structure(structure) => format!("free_{}({});", structure.name, access),
+    }
+}
+
+fn init_field(access: &str, field: &Field) -> String {
+    match field.r#type.as_ref() {
+        Type::String => format!("{}{} = g_strdup({});", access, field.name, field.name),
+        _ => format!("{}{} = {};", access, field.name, field.name),
+    }
+}
+
+fn decl_param(field: &Field) -> String {
+    match field.r#type.as_ref() {
+        Type::String => format!("const {} {}", field.r#type.cname(), field.name),
+        _ => format!("{} {}", field.r#type.cname(), field.name),
     }
 }
