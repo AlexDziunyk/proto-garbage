@@ -37,7 +37,7 @@ typedef struct \{
 } t_{ message_type.prefix }_funcs;
 
 {{ for message in messages }}
-t_{ message_type.name } *new_{ message.stripped_name }_{ message_type.name }(void);
+t_{ message_type.name } *new_{ message.stripped_name }_{ message_type.name }({ message.constructor_params });
 void init_{ message.name }_funcs(t_{ message_type.prefix }_funcs *funcs);
 {{ endfor }}
 
