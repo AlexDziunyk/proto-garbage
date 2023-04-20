@@ -1,37 +1,29 @@
-[[models]]
-name = "user"
-fields = [
-    { name = "id", type = "int" },
-    { name = "login", type = "string" },
-    { name = "avatar", type = "string" },
-    { name = "status", type = "string" },
-    { name = "bio", type = "string" },
-]
-
-[[models]]
-name = "chat"
-fields = [
-    { name = "id", type = "int" },
-    { name = "title", type = "string" },
-    { name = "avatar", type = "string" },
-]
-
-[[models]]
-name = "message"
-fields = [
-    { name = "id", type = "int" },
-    { name = "chat_id", type = "int" },
-    { name = "text", type = "string" },
-    { name = "from_id", type = "int" },
-    { name = "date", type = "int" },
-]
-
-
-[[requests]]
-name = "get_user"
-fields = [{ name = "id", type = "int" }]
-
-
-[[updates]]
-name = "user"
-fields = [{ name = "user", type = "user" }]
+# Standard types:
+# 
+# primitives:
+# bool, char, short, int, long, float, double
+# uchar, ushort, uint, ulong,
+# 
+# string: string
+# array: <type>[]
+# 
+# 
+# Additional types may be declared in the types section:
+# 
+# [[types]]
+# name = "test"         # name to use in the protocol definition
+# cname = "t_test"      # name to use in the generated code
+# type = "primitive"    # "primitive" or "structure"
+# 
+# 
+# Models, requests and updates are declared in the
+# corresponding sections as follows:
+# 
+# [[models]]           # "models", "requests" or "updates"
+# name = "user"
+# fields = [
+#     { name = "id", type = "int" },
+#     { name = "login", type = "string" },
+#     { name = "avatar", type = "string" },
+# ]
+#
