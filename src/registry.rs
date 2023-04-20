@@ -1,6 +1,8 @@
 use std::{collections::HashMap, rc::Rc};
 
-use crate::protocol::Object;
+use anyhow::{anyhow, Result};
+
+use crate::protocol::{self, Object};
 
 #[derive(Debug, Clone)]
 pub struct Field {
@@ -68,6 +70,28 @@ impl Default for TypeRegistry {
 }
 
 impl TypeRegistry {
+    pub fn register_declared_type(&mut self, r#type: &protocol::Type) -> Result<()> {
+        match r#type.r#type.as_str() {
+            "primitive" => {
+                self.register_type(&r#type.name, Type::Primitive(r#type.cname.clone()));
+                Ok(())
+            }
+            "structure" => {
+                self.register_type(
+                    &r#type.name,
+                    Type::Structure(Structure {
+                        name: r#type.name.clone(),
+                        cname: r#type.cname.clone(),
+                        fields: Vec::default(),
+                    }),
+                );
+                Ok(())
+            }
+            "string" | "array" => Err(anyhow!("Impossible to declare type: {}", r#type.r#type)),
+            _ => Err(anyhow!("Unknown type: {}", r#type.r#type)),
+        }
+    }
+
     pub fn convert_and_register(&mut self, object: &Object) -> Structure {
         let structure = self.convert(object);
 

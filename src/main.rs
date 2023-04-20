@@ -55,6 +55,10 @@ fn main() -> Result<()> {
     let protocol = Protocol::from_file(&args[1])?;
     let mut registry = TypeRegistry::default();
 
+    for r#type in protocol.types.iter() {
+        registry.register_declared_type(r#type)?;
+    }
+
     let models: Vec<_> = protocol
         .models
         .iter()

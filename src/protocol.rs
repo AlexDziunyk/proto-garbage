@@ -4,6 +4,13 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Serialize, Deserialize)]
+pub struct Type {
+    pub name: String,
+    pub cname: String,
+    pub r#type: String,
+}
+
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Field {
     pub name: String,
     pub r#type: String,
@@ -17,6 +24,7 @@ pub struct Object {
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Protocol {
+    pub types: Vec<Type>,
     pub models: Vec<Object>,
     pub requests: Vec<Object>,
     pub updates: Vec<Object>,
