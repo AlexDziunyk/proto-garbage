@@ -26,4 +26,15 @@
 #     { name = "login", type = "string" },
 #     { name = "avatar", type = "string" },
 # ]
+# 
+# 
+# Declared models can also be used as types
+# for example:
+# 
+# [[updates]]          # "models", "requests" or "updates"
+# name = "new_user"
+# fields = [
+#     { name = "user", type = "user" },
+#     { name = "date", type = "long" },
+# ]
 #
