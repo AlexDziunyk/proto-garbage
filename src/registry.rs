@@ -59,7 +59,14 @@ impl Default for TypeRegistry {
             type_map: HashMap::default(),
         };
 
+        registry.register_type("char", Type::Primitive("char".to_owned()));
+        registry.register_type("uchar", Type::Primitive("unsigned char".to_owned()));
+        registry.register_type("short", Type::Primitive("short".to_owned()));
+        registry.register_type("ushort", Type::Primitive("unsigned short".to_owned()));
         registry.register_type("int", Type::Primitive("int".to_owned()));
+        registry.register_type("uint", Type::Primitive("unsigned int".to_owned()));
+        registry.register_type("long", Type::Primitive("long".to_owned()));
+        registry.register_type("ulong", Type::Primitive("unsigned long".to_owned()));
         registry.register_type("bool", Type::Primitive("bool".to_owned()));
         registry.register_type("float", Type::Primitive("float".to_owned()));
         registry.register_type("double", Type::Primitive("double".to_owned()));
