@@ -1,5 +1,11 @@
 #include "models.h"
 
+{ cname } *new_{ name }({ constructor_params }) \{
+    { cname } *{ name } = g_new({ cname }, 1);
+    { fields_init }
+    return { name };
+}
+
 cJSON *{ name }_to_json({ cname } *{ name }) \{
     cJSON *json = cJSON_CreateObject();
     { fields_to_json }
