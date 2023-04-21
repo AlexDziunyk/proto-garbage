@@ -15,6 +15,7 @@ use super::{
 
 #[derive(Serialize)]
 struct ModelsContext {
+    includes: Vec<String>,
     models: Vec<ModelContext>,
 }
 
@@ -47,8 +48,9 @@ impl ModelContext {
     }
 }
 
-pub fn generate_models(models: &[Structure], tt: &TinyTemplate) -> Result<()> {
+pub fn generate_models(includes: &[String], models: &[Structure], tt: &TinyTemplate) -> Result<()> {
     let context = ModelsContext {
+        includes: includes.to_vec(),
         models: models.iter().map(ModelContext::from_structure).collect(),
     };
 

@@ -8,6 +8,13 @@
 # array: <type>[]
 # 
 # 
+# Additional headers may be included in the includes section:
+# includes = [
+#     "<stdint.h>",
+#     "\"errors.h\"",
+# ]
+# 
+# 
 # Additional types may be declared in the types section:
 # 
 # [[types]]

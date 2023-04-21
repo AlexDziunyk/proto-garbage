@@ -4,6 +4,10 @@
 #include <glib.h>
 #include <stdbool.h>
 
+{{ for include in includes }}
+#include { include }
+{{ endfor }}
+
 {{ for model in models }}
 typedef struct \{
     { model.fields }

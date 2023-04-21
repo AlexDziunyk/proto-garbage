@@ -24,6 +24,7 @@ pub struct Object {
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Protocol {
+    pub includes: Vec<String>,
     pub types: Vec<Type>,
     pub models: Vec<Object>,
     pub requests: Vec<Object>,

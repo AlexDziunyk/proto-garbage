@@ -66,7 +66,7 @@ fn main() -> Result<()> {
         .collect();
 
     let tt = load_templates()?;
-    generate_models(&models, &tt)?;
+    generate_models(&protocol.includes, &models, &tt)?;
 
     let requests: Vec<_> = protocol
         .requests
